@@ -383,6 +383,15 @@ class IRM(IRMBase):
         if self.a <= 0:
             raise ValueError(
                 f"a must be > 0, got {self.a} instead.")
+        # b
+        if self.b <= 0:
+            raise ValueError(
+                f"b must be > 0, got {self.b} instead.")
+        # X
+        X = X.astype(np.int32)
+        if not np.all(np.unique(X) == np.array([0, 1], dtype=np.int32)):
+            raise ValueError(
+                f"X must be binary, got {np.unique(X)} instead.")
 
     def _calc_posterior(self, X):
         logv = log_ewens_sampling_formula(self.alpha, self.n_sample_labels_) - gammaln(len(self.n_sample_labels_) + 1)
@@ -524,6 +533,22 @@ class PoissonIRM(IRMBase):
             verbose=verbose)
         self.a = a
         self.b = b
+
+    def _check_params(self, X):
+        super()._check_params(X)
+        # a
+        if self.a <= 0:
+            raise ValueError(
+                f"a must be > 0, got {self.a} instead.")
+        # b
+        if self.b <= 0:
+            raise ValueError(
+                f"b must be > 0, got {self.b} instead.")
+        # X
+        X = X.astype(np.int32)
+        if not np.all(X >= 0):
+            raise ValueError(
+                f"elements of X must be >= 0, got {np.unique(X)} instead.")
 
     def _calc_posterior(self, X):
         logv = log_ewens_sampling_formula(self.alpha, self.n_sample_labels_) - gammaln(len(self.n_sample_labels_) + 1)
